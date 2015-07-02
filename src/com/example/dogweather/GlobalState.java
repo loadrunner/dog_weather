@@ -15,7 +15,25 @@ public class GlobalState extends Application {
 		BREED2,
 		BREED3,
 		BREED4,
-		BREED5
+		BREED5;
+		
+		public int getDrawableResource() {
+			switch (this) {
+				case BREED1:
+					return R.drawable.ic_launcher;
+				case BREED2:
+					return R.drawable.ic_launcher;
+				case BREED3:
+					return R.drawable.ic_launcher;
+				case BREED4:
+					return R.drawable.ic_launcher;
+				case BREED5:
+					return R.drawable.ic_launcher;
+				case GENERIC:
+				default:
+					return R.drawable.ic_launcher;
+			}
+		}
 	}
 	
 	public final static String SETTINGS_FILE = "app_settings";

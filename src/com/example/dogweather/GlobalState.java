@@ -22,6 +22,7 @@ public class GlobalState extends Application {
 	public final static Units DEFAULT_UNITS = Units.FAHRENHEIT;
 	public final static Breed DEFAULT_BREED = Breed.GENERIC;
 	
+	private boolean mConfigured;
 	private Units mUnits;
 	private String mDogName;
 	private Breed mDogBreed;
@@ -49,6 +50,9 @@ public class GlobalState extends Application {
 		reloadPreferences();
 	}
 	
+	public boolean isConfigured() {
+		return mConfigured;
+	}
 	public Units getUnits() {
 		return mUnits;
 	}
@@ -62,6 +66,9 @@ public class GlobalState extends Application {
 		return mLocation;
 	}
 	
+	public void setConfigured(boolean configured) {
+		mConfigured = configured;
+	}
 	public void setUnits(Units type) {
 		mUnits = type;
 	}
@@ -81,6 +88,8 @@ public class GlobalState extends Application {
 	
 	public void reloadPreferences() {
 		SharedPreferences settings = getSharedPreferences();
+		
+		mConfigured = settings.getBoolean("configured", false);
 		
 		int units = settings.getInt("units", -1);
 		if (units >= 0 && units < Units.values().length)
@@ -103,6 +112,7 @@ public class GlobalState extends Application {
 	public void savePreferences() {
 		SharedPreferences.Editor editor = getSharedPreferences().edit();
 		
+		editor.putBoolean("configured", mConfigured);
 		editor.putInt("units", mUnits.ordinal());
 		editor.putString("dog_name", mDogName);
 		editor.putString("breed", mDogBreed.name());

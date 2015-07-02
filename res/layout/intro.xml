@@ -41,54 +41,6 @@
 			android:layout_width="800dp"
 			android:layout_height="wrap_content"
 			android:orientation="horizontal">
-			<ImageView
-				android:id="@+id/dog1"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@drawable/ic_launcher"
-				android:tag="1" />
-			<ImageView
-				android:id="@+id/dog2"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@drawable/ic_launcher"
-				android:tag="2" />
-			<ImageView
-				android:id="@+id/dog3"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@drawable/ic_launcher"
-				android:tag="3" />
-			<ImageView
-				android:id="@+id/dog4"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@drawable/ic_launcher"
-				android:tag="4" />
-			<ImageView
-				android:id="@+id/dog5"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@drawable/ic_launcher"
-				android:tag="5" />
-			<ImageView
-				android:id="@+id/dog6"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@drawable/ic_launcher"
-				android:tag="6" />
-			<ImageView
-				android:id="@+id/dog7"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@drawable/ic_launcher"
-				android:tag="7" />
-			<ImageView
-				android:id="@+id/dog8"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@drawable/ic_launcher"
-				android:tag="8" />
 		</LinearLayout>
 	</HorizontalScrollView>
 </RelativeLayout>

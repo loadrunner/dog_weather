@@ -15,8 +15,7 @@ public class MainActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		Bundle extras = getIntent().getExtras();
-		if (extras == null || extras.getString("breed") == null) {
+		if (!((GlobalState) getApplication()).isConfigured()) {
 			Intent intent = new Intent(this, IntroActivity.class);
 			startActivity(intent);
 			finish();

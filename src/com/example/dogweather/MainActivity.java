@@ -32,4 +32,10 @@ public class MainActivity extends FragmentActivity implements
 		mNavigationDrawerFragment = (DrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 	}
+	
+	@Override
+	public void unitsChanged() {
+		// TODO Auto-generated method stub
+		
+	}
 }

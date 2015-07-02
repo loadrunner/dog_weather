@@ -1,5 +1,7 @@
 package com.example.dogweather;
 
+import com.example.dogweather.GlobalState.Units;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -7,8 +9,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class DrawerFragment extends Fragment {
@@ -42,6 +46,48 @@ public class DrawerFragment extends Fragment {
 		mViewContainer = (ViewGroup) inflater.inflate(R.layout.fragment_drawer, container, false);
 		
 		((TextView) mViewContainer.findViewById(R.id.dog_name)).setText(mGlobalState.getDogName());
+		
+		final Button unitsCButton = (Button) mViewContainer.findViewById(R.id.units_c);
+		final Button unitsFButton = (Button) mViewContainer.findViewById(R.id.units_f);
+		
+		unitsCButton.setPressed(mGlobalState.getUnits() == Units.CELSIUS);
+		unitsFButton.setPressed(mGlobalState.getUnits() == Units.FAHRENHEIT);
+		
+		unitsCButton.setOnTouchListener(new View.OnTouchListener() {
+			@SuppressLint("ClickableViewAccessibility")
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					mGlobalState.setUnits(Units.CELSIUS);
+					mGlobalState.savePreferences();
+					
+					unitsCButton.setPressed(true);
+					unitsFButton.setPressed(false);
+					
+					mCallbacks.unitsChanged();
+				}
+				
+				return true;
+			}
+		});
+		
+		unitsFButton.setOnTouchListener(new View.OnTouchListener() {
+			@SuppressLint("ClickableViewAccessibility")
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					mGlobalState.setUnits(Units.FAHRENHEIT);
+					mGlobalState.savePreferences();
+					
+					unitsCButton.setPressed(false);
+					unitsFButton.setPressed(true);
+					
+					mCallbacks.unitsChanged();
+				}
+				
+				return true;
+			}
+		});
 		
 		return mViewContainer;
 	}
@@ -90,6 +136,6 @@ public class DrawerFragment extends Fragment {
 	}
 	
 	public static interface NavigationDrawerCallbacks {
-		
+		void unitsChanged();
 	}
 }

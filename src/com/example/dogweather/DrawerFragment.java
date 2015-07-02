@@ -4,18 +4,16 @@ import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.TextView;
 
 public class DrawerFragment extends Fragment {
+	
+	private GlobalState mGlobalState;
 	
 	private NavigationDrawerCallbacks mCallbacks;
 	
@@ -43,6 +41,8 @@ public class DrawerFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mViewContainer = (ViewGroup) inflater.inflate(R.layout.fragment_drawer, container, false);
 		
+		((TextView) mViewContainer.findViewById(R.id.dog_name)).setText(mGlobalState.getDogName());
+		
 		return mViewContainer;
 	}
 	
@@ -60,11 +60,14 @@ public class DrawerFragment extends Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
+		
 		try {
 			mCallbacks = (NavigationDrawerCallbacks) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
 		}
+		
+		mGlobalState = (GlobalState) activity.getApplication();
 	}
 	
 	@Override
@@ -73,7 +76,7 @@ public class DrawerFragment extends Fragment {
 		
 		mCallbacks = null;
 	}
-
+	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);

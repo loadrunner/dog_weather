@@ -6,9 +6,9 @@ import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 
-public class MainActivity extends FragmentActivity implements
-		DrawerFragment.NavigationDrawerCallbacks {
+public class MainActivity extends FragmentActivity {
 	
+	private MainFragment mMainFragment;
 	private DrawerFragment mNavigationDrawerFragment;
 	
 	@Override
@@ -23,19 +23,15 @@ public class MainActivity extends FragmentActivity implements
 		
 		setContentView(R.layout.activity_main);
 		
+		mMainFragment = MainFragment.getInstance();
+		
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager
 				.beginTransaction()
-				.replace(R.id.container, MainFragment.getInstance())
+				.replace(R.id.container, mMainFragment)
 				.commit();
 		
 		mNavigationDrawerFragment = (DrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-		mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
-	}
-	
-	@Override
-	public void unitsChanged() {
-		// TODO Auto-generated method stub
-		
+		mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mMainFragment);
 	}
 }

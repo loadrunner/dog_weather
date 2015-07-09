@@ -1,6 +1,7 @@
 package com.example.dogweather;
 
 import com.example.dogweather.GlobalState.Units;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,6 +26,7 @@ public class DrawerFragment extends Fragment {
 	private DrawerLayout mDrawerLayout;
 	private View mFragmentContainerView;
 	private ViewGroup mViewContainer;
+	private TextView mLocationView;
 	
 	public DrawerFragment() {
 		
@@ -64,7 +67,7 @@ public class DrawerFragment extends Fragment {
 					unitsCButton.setPressed(true);
 					unitsFButton.setPressed(false);
 					
-					mCallbacks.unitsChanged();
+					mCallbacks.onUnitsChanged();
 				}
 				
 				return true;
@@ -82,12 +85,53 @@ public class DrawerFragment extends Fragment {
 					unitsCButton.setPressed(false);
 					unitsFButton.setPressed(true);
 					
-					mCallbacks.unitsChanged();
+					mCallbacks.onUnitsChanged();
 				}
 				
 				return true;
 			}
 		});
+		
+		mLocationView = (TextView) mViewContainer.findViewById(R.id.location);
+		
+		if (mGlobalState.getCurrentLocation() != null) {
+			mLocationView.setText(mGlobalState.getCurrentLocation().first);
+			if (mCallbacks != null)
+				mCallbacks.onLocationChanged();
+		} else {
+			mLocationView.setText("...");
+			
+			new Thread(new Runnable() {
+				private int i = 0;
+				
+				@Override
+				public void run() {
+					while (i < 10) {
+						i++;
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e) {
+							return;
+						}
+						
+						if (mGlobalState.getCurrentLocation() != null) {
+							getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									mLocationView.setText(mGlobalState.getCurrentLocation().first);
+									if (mCallbacks != null)
+										mCallbacks.onLocationChanged();
+								}
+							});
+							return;
+						}
+					}
+					
+					mLocationView.setText("Cannot get location!");
+					//TODO: maybe still trigger location changed event with error
+				}
+			}).start();
+		}
 		
 		return mViewContainer;
 	}
@@ -96,22 +140,18 @@ public class DrawerFragment extends Fragment {
 		return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
 	}
 	
-	public void setUp(int fragmentId, DrawerLayout drawerLayout) {
+	public void setUp(int fragmentId, DrawerLayout drawerLayout, NavigationDrawerCallbacks callbacks) {
 		mFragmentContainerView = getActivity().findViewById(fragmentId);
 		mDrawerLayout = drawerLayout;
 		
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+		
+		mCallbacks = callbacks;
 	}
 	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		
-		try {
-			mCallbacks = (NavigationDrawerCallbacks) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
-		}
 		
 		mGlobalState = (GlobalState) activity.getApplication();
 	}
@@ -136,6 +176,7 @@ public class DrawerFragment extends Fragment {
 	}
 	
 	public static interface NavigationDrawerCallbacks {
-		void unitsChanged();
+		void onUnitsChanged();
+		void onLocationChanged();
 	}
 }

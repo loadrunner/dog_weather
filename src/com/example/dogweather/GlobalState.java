@@ -1,8 +1,18 @@
 package com.example.dogweather;
 
+import java.util.Locale;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.util.Pair;
 
 public class GlobalState extends Application {
 	public enum Units {
@@ -45,6 +55,7 @@ public class GlobalState extends Application {
 	private String mDogName;
 	private Breed mDogBreed;
 	private String mLocation;
+	private Pair<String, Location> mCurrentLocation = null;
 	
 	private static GlobalState mInstance = null;
 	
@@ -66,6 +77,43 @@ public class GlobalState extends Application {
 		mInstance = this;
 		
 		reloadPreferences();
+		
+		if (getLocation() == null) { // auto
+			final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+			
+			LocationListener locationListener = new LocationListener() {
+				public void onLocationChanged(Location location) {
+					Log.e("doggydog", location.getLatitude() + "x" + location.getLongitude());
+					
+					double lat = location.getLatitude();
+					double lng = location.getLongitude();
+					
+					Geocoder geoCoder = new Geocoder(getContext(), Locale.getDefault());
+					try {
+						Address address = geoCoder.getFromLocation(lat, lng, 1).get(0);
+						mCurrentLocation = new Pair<String, Location>(address.getLocality() + ", " + address.getAdminArea(), location);
+						
+						Log.e("doggydog", address.toString());
+						Log.e("doggydog", mCurrentLocation.first);
+					} catch (Exception e) {
+						Log.e("doggydog", "exception " + lat + "," + lng);
+						mCurrentLocation = new Pair<String, Location>(lat + "," + lng, location);
+					}
+					
+					locationManager.removeUpdates(this);
+				}
+				
+				public void onStatusChanged(String provider, int status, Bundle extras) {}
+				
+				public void onProviderEnabled(String provider) {}
+				
+				public void onProviderDisabled(String provider) {}
+			};
+			
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		} else {
+			mCurrentLocation = new Pair<String, Location>(mLocation, null);
+		}
 	}
 	
 	public boolean isConfigured() {
@@ -82,6 +130,10 @@ public class GlobalState extends Application {
 	}
 	public String getLocation() {
 		return mLocation;
+	}
+	
+	public Pair<String, Location> getCurrentLocation() {
+		return mCurrentLocation;
 	}
 	
 	public void setConfigured(boolean configured) {

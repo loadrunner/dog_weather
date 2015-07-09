@@ -48,12 +48,15 @@ public class MainFragment extends Fragment implements DrawerFragment.NavigationD
 	
 	@Override
 	public void onUnitsChanged() {
-		// TODO Auto-generated method stub
-		
+		updateWeatherData();
 	}
 	
 	@Override
 	public void onLocationChanged() {
+		updateWeatherData();
+	}
+	
+	private void updateWeatherData() {
 		Weather.getWeatherStatus(mGlobalState.getCurrentLocation().first, new Weather.WeatherCallback() {
 			@Override
 			public void onWeatherFinished(float temperature, WeatherStatus status) {

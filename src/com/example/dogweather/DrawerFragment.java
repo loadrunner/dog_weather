@@ -39,6 +39,50 @@ public class DrawerFragment extends Fragment {
 	}
 	
 	@Override
+	public void onResume() {
+		super.onResume();
+		
+		if (mGlobalState.getCurrentLocation() != null) {
+			mLocationView.setText(mGlobalState.getCurrentLocation().first);
+			if (mCallbacks != null)
+				mCallbacks.onLocationChanged();
+		} else {
+			mLocationView.setText("...");
+			
+			new Thread(new Runnable() {
+				private int i = 0;
+				
+				@Override
+				public void run() {
+					while (i < 10) {
+						i++;
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e) {
+							return;
+						}
+						
+						if (mGlobalState.getCurrentLocation() != null) {
+							getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									mLocationView.setText(mGlobalState.getCurrentLocation().first);
+									if (mCallbacks != null)
+										mCallbacks.onLocationChanged();
+								}
+							});
+							return;
+						}
+					}
+					
+					mLocationView.setText("Cannot get location!");
+					//TODO: maybe still trigger location changed event with error
+				}
+			}).start();
+		}
+	}
+	
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
@@ -93,45 +137,6 @@ public class DrawerFragment extends Fragment {
 		});
 		
 		mLocationView = (TextView) mViewContainer.findViewById(R.id.location);
-		
-		if (mGlobalState.getCurrentLocation() != null) {
-			mLocationView.setText(mGlobalState.getCurrentLocation().first);
-			if (mCallbacks != null)
-				mCallbacks.onLocationChanged();
-		} else {
-			mLocationView.setText("...");
-			
-			new Thread(new Runnable() {
-				private int i = 0;
-				
-				@Override
-				public void run() {
-					while (i < 10) {
-						i++;
-						try {
-							Thread.sleep(500);
-						} catch (InterruptedException e) {
-							return;
-						}
-						
-						if (mGlobalState.getCurrentLocation() != null) {
-							getActivity().runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									mLocationView.setText(mGlobalState.getCurrentLocation().first);
-									if (mCallbacks != null)
-										mCallbacks.onLocationChanged();
-								}
-							});
-							return;
-						}
-					}
-					
-					mLocationView.setText("Cannot get location!");
-					//TODO: maybe still trigger location changed event with error
-				}
-			}).start();
-		}
 		
 		return mViewContainer;
 	}
